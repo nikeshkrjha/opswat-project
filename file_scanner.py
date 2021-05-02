@@ -4,12 +4,12 @@ import logging
 import pprint
 import os
 from requests.exceptions import HTTPError
+from dotenv import load_dotenv
+from constants import BASE_URL, HASH_NOT_FOUND
 
+# load environment variable from the .env file to the os.environ dictionary
+load_dotenv()
 
-API_KEY = "8144bd2eb424525853b30e0d3fd1792c"
-PASSWORD = "Kera@123456789"
-BASE_URL = "https://api.metadefender.com/"
-HASH_NOT_FOUND = 404003
 server_response = {}
 
 logging.basicConfig(level=logging.DEBUG)
@@ -34,14 +34,14 @@ def generate_payload():
 def generate_url_and_params(hash, file_path):
     if hash:
         url = f'{BASE_URL}v4/hash/{hash}'
-        headers = {'apikey': API_KEY}
+        headers = {'apikey': os.environ.get('API_KEY')}
         files = None
     else:
         url = f'{BASE_URL}v4/file'
-        headers = {'apikey': API_KEY,
+        headers = {'apikey': os.environ.get('API_KEY'),
                    'content-type': 'application/octet-stream'}
         files = {'file': open(file_path, 'rb')}
-    return(url, headers,files)
+    return(url, headers, files)
 
 
 def make_request(hash, file_path):
@@ -56,7 +56,7 @@ def make_request(hash, file_path):
             with open(file_path, 'rb') as f:
                 response = requests.post(
                     url,
-                    data= f,
+                    data=f,
                     headers=headers
                 )
         json_response = response.json()
@@ -90,7 +90,3 @@ if response.status_code != 200:
             pprint.pprint(server_response)
 else:
     pprint.pprint(response.json())
-
-
-
-
