@@ -1,11 +1,11 @@
 import requests
-import hashlib
 import logging
 import pprint
 import os
 from requests.exceptions import HTTPError
 from dotenv import load_dotenv
 from constants import BASE_URL, HASH_NOT_FOUND
+from utils import generate_file_hash
 
 # load environment variable from the .env file to the os.environ dictionary
 load_dotenv()
@@ -13,18 +13,6 @@ load_dotenv()
 server_response = {}
 
 logging.basicConfig(level=logging.DEBUG)
-
-
-def generate_file_hash(path):
-    """ Generate the hash of the given file using MD5 """
-    BLOCKSIZE = 65536
-    hasher = hashlib.md5()
-    with open(path, 'rb') as afile:
-        buf = afile.read(BLOCKSIZE)
-        while len(buf) > 0:
-            hasher.update(buf)
-            buf = afile.read(BLOCKSIZE)
-    return hasher.hexdigest()
 
 
 def generate_payload():
