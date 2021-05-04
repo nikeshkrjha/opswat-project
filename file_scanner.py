@@ -14,8 +14,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 def print_response(responseJSON):
-    """ 
-    Display the results of a scan. 
+    """
+    Display the results of a scan.
     Parameters:
       responseJSON: The JSON response from the server
     """
@@ -32,10 +32,37 @@ def print_response(responseJSON):
         for key, value in responseJSON[key_scan_results][key_scan_details].items():
             message = f'engine: {key} \nthreat_found:{value[key_threat_found]}\nscan_result: {value[key_scan_result]}\ndef_time: {value[key_def_time]}'
             print(message)
-        print('\nEND')
+        print('END')
 
 
-if __name__ == '__main__':
+def process_server_response(response, file_path):
+    # check the status code of the response and process the result accordingly
+    if response.status_code != requests.codes.ok:
+        json_response = response.json()
+        if json_response['error']['code'] == HASH_NOT_FOUND:
+            # There is no previously cached result for the file so send a upload request
+            response = make_request_with_file(file_path)
+            if response.status_code == requests.codes.ok:
+                server_response = response.json()
+                # save data_id for future requests
+                if "data_id" in server_response:
+                    data_id = server_response['data_id']
+                    # create a thread to continuously call the web api to query the scan results using the data_id
+                    api_caller_event = threading.Event()
+                    while not api_caller_event.wait(WAIT_TIME_SECONDS):
+                        results = make_request_with_hash('', data_id).json()
+                        if results['scan_results']['progress_percentage'] == 100:
+                            # stop the thread when scan results have been obtained
+                            api_caller_event.set()
+                            print_response(results)
+    else:
+        print_response(response.json())
+
+
+def main():
+    """ 
+    The main function
+    """
     file_path = Path(input("Please enter file name or path: ").strip())
     print(file_path.name)
 
@@ -49,25 +76,8 @@ if __name__ == '__main__':
             sys.exit()
         file_hash = generate_file_hash(file_path)
         response = make_request_with_hash(file_hash, None)
+        process_server_response(response, file_path)
 
-        # check the status code of the response and process the result accordingly
-        if response.status_code != requests.codes.ok:
-            json_response = response.json()
-            if json_response['error']['code'] == HASH_NOT_FOUND:
-                # There is no previously cached result for the file so send a upload request
-                response = make_request_with_file(file_path)
-                if response.status_code == requests.codes.ok:
-                    server_response = response.json()
-                    # save data_id for future requests
-                    if "data_id" in server_response:
-                        data_id = server_response['data_id']
-                        # create a thread to continuously call the web api to query the scan results using the data_id
-                        api_caller_event = threading.Event()
-                        while not api_caller_event.wait(WAIT_TIME_SECONDS):
-                            results = make_request_with_hash('', data_id).json()
-                            if results['scan_results']['progress_percentage'] == 100:
-                                # stop the thread when scan results have been obtained
-                                api_caller_event.set()
-                                print_response(results)
-        else:
-            print_response(response.json())
+
+if __name__ == '__main__':
+    main()
