@@ -1,10 +1,11 @@
 import requests
 import logging
-import pprint
 from requests.exceptions import HTTPError
 from constants import BASE_URL, HASH_NOT_FOUND
 from dotenv import load_dotenv
 import os
+
+
 logging.basicConfig(level=logging.DEBUG)
 
 # load environment variable from the .env file to the os.environ dictionary

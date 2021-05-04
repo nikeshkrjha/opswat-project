@@ -38,7 +38,6 @@ def print_response(responseJSON):
 if __name__ == '__main__':
     file_path = Path(input("Please enter file name or path: ").strip())
     print(file_path.name)
-    sys.exit()
 
     if not os.path.exists(file_path):
         print('File does not exist at path: ', file_path)
