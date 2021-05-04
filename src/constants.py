@@ -1,0 +1,4 @@
+BASE_URL = "https://api.metadefender.com/"
+HASH_NOT_FOUND = 404003
+MAX_FILE_SIZE = 146800640 # 1024* 1024 * 140
+WAIT_TIME_SECONDS = 2
