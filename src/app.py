@@ -1,14 +1,15 @@
-import requests
 import logging
-import pprint
 import os
+import pprint
 import sys
-from pathlib import Path
-from constants import HASH_NOT_FOUND, MAX_FILE_SIZE, WAIT_TIME_SECONDS
-from utils import generate_file_hash
-from requests_handler import make_request_with_file, make_request_with_hash
 import threading
+from pathlib import Path
 
+import requests
+
+from constants import HASH_NOT_FOUND, MAX_FILE_SIZE, WAIT_TIME_SECONDS
+from requests_handler import make_request_with_file, make_request_with_hash
+from utils import generate_file_hash
 
 logging.basicConfig(level=logging.DEBUG)
 
