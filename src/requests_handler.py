@@ -36,8 +36,7 @@ def make_request_with_hash(hash, data_id=None):
         print(f'\n HTTP error occurred: {http_err}')  # Python 3.6
     except Exception as err:
         print(f'\n Other error occurred: {err}')  # Python 3.6
-    else:
-        print(f'\n Success! \n {json_response}')
+    
 
 
 def make_request_with_file(file_path):
@@ -63,5 +62,4 @@ def make_request_with_file(file_path):
         print(f'\n HTTP error occurred: {http_err}')  # Python 3.6
     except Exception as err:
         print(f'\n Other error occurred: {err}')  # Python 3.6
-    else:
-        print(f'\n Success! \n {json_response}')
+    

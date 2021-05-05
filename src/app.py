@@ -32,7 +32,6 @@ def print_response(responseJSON, file_path):
     if key_scan_results in responseJSON:
         print(f'file_name: {file_path.name}')
         print(f'overall_status: {responseJSON[key_scan_results][key_overall_status]}')
-
         for key, value in responseJSON[key_scan_results][key_scan_details].items():
             if not value[key_threat_found]:
                 threat_found_value = 0
@@ -72,7 +71,6 @@ def main():
     The main function
     """
     file_path = Path(input('Please enter file name or path: ').strip())
-    print(file_path.name)
 
     if not os.path.exists(file_path):
         print('File does not exist at path: ', file_path)
