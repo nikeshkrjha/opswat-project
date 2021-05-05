@@ -1,1 +1,0 @@
-# opswat-project
