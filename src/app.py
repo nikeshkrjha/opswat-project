@@ -14,7 +14,7 @@ from utils import generate_file_hash
 logging.basicConfig(level=logging.DEBUG)
 
 
-def print_response(responseJSON):
+def print_response(responseJSON, file_path):
     """
     Display the results of a scan.
     Parameters:
@@ -27,11 +27,18 @@ def print_response(responseJSON):
     key_scan_result = 'scan_result_i'
     key_overall_status = 'scan_all_result_a'
 
+    print('\n')
     # look for key_scan_results
     if key_scan_results in responseJSON:
+        print(f'file_name: {file_path.name}')
         print(f'overall_status: {responseJSON[key_scan_results][key_overall_status]}')
+
         for key, value in responseJSON[key_scan_results][key_scan_details].items():
-            message = f'engine: {key} \nthreat_found:{value[key_threat_found]}\nscan_result: {value[key_scan_result]}\ndef_time: {value[key_def_time]}'
+            if not value[key_threat_found]:
+                threat_found_value = 0
+            else:
+                threat_found_value = value[key_threat_found]
+            message = f'engine: {key} \nthreat_found:{threat_found_value}\nscan_result: {value[key_scan_result]}\ndef_time: {value[key_def_time]}'
             print(message)
         print('END')
 
@@ -55,16 +62,16 @@ def process_server_response(response, file_path):
                         if results['scan_results']['progress_percentage'] == 100:
                             # stop the thread when scan results have been obtained
                             api_caller_event.set()
-                            print_response(results)
+                            print_response(results, file_path)
     else:
-        print_response(response.json())
+        print_response(response.json(), file_path)
 
 
 def main():
     """ 
     The main function
     """
-    file_path = Path(input("Please enter file name or path: ").strip())
+    file_path = Path(input('Please enter file name or path: ').strip())
     print(file_path.name)
 
     if not os.path.exists(file_path):

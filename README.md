@@ -3,6 +3,7 @@
 ## Details of the Project
 - Programming language: Python
 - Version: 3.8.5
+- Developed and tested on Ubuntu 20.04.2 LTS
 
 ## Steps to build and run the project
 - Install Python if not installed already
